@@ -1,32 +1,85 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "storageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "storage Account Name"
-            },
-            "minLength": 3,
-            "maxLength": 24
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageAccName": {
+      "defaultValue": "testacc",
+      "type": "String"
     },
-    "functions": [],
-    "variables": {},
-    "resources": [{
-            "name": "[parameters('storageAccountName')]",
-            "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2021-04-01",
-            "tags": {
-                "displayName": "storageaccount1"
+    "functionName": {
+      "defaultValue": "testfun",
+      "type": "String"
+    }
+  },
+  "functions": [],
+  "variables": {
+    "functionStorageAccountName": "[parameters('storageAccName')]",
+    "sitesFunctionAppName": "[parameters('functionName')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2021-04-01",
+      "name": "[variables('functionStorageAccountName')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+      },
+      "kind": "Storage",
+      "properties": {
+        "supportsHttpsTrafficOnly": true
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2018-11-01",
+      "name": "[variables('sitesFunctionAppName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageAccountName'))]"
+      ],
+      "kind": "functionapp",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "enabled": true,
+        "httpsOnly": true,
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('functionStorageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageAccountName')),'2017-06-01').keys[0].value)]"
             },
-            "location": "[resourceGroup().location]",
-            "kind": "StorageV2",
-            "sku": {
-                "name": "Premium_LRS",
-                "tier": "Premium"
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('functionStorageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageAccountName')),'2017-06-01').keys[0].value)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "[toLower(variables('sitesFunctionAppName'))]"
+            },
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~3"
+            },
+            {
+              "name": "FUNCTIONS_WORKER_RUNTIME",
+              "value": "dotnet"
+            },
+            {
+              "name": "WEBSITE_RUN_FROM_PACKAGE",
+              "value": "1"
+            },
+            {
+              "name": "WEBSITE_TIME_ZONE",
+              "value": "UTC"
             }
+          ]
         }
-    ],
-    "outputs": {}
+      }
+    }
+  ],
+  "outputs": {}
 }
