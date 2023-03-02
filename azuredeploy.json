@@ -375,10 +375,10 @@
           "bypass": "AzureServices",
           "virtualNetworkRules": [],
           "ipRules": [
-            {
-              "value": "103.221.72.225",
-              "action": "Allow"
-            }
+            //{
+            //  "value": "103.221.72.225",
+            //  "action": "Allow"
+            //}
           ],
           "defaultAction": "Deny"
         },
