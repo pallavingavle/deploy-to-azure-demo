@@ -62,7 +62,7 @@
     },
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "2022-05-01",
+      "apiVersion": "2022-09-01",
       "name": "[parameters('storageAccounts_storageaccfun_name')]",
       "location": "eastus",
       "sku": {
@@ -76,14 +76,14 @@
         "networkAcls": {
           "bypass": "AzureServices",
           "virtualNetworkRules": [
-            //{
-            //  "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_name'), 'function')]",
-            //  "action": "Allow",
-            //  "state": "Succeeded"
-            //}
+            {
+              "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_name')),'/subnets/function')]",
+              "action": "Allow",
+              "state": "Succeeded"
+            }
           ],
           "ipRules": [],
-          "defaultAction": "Allow"
+          "defaultAction": "Deny"
         },
         "supportsHttpsTrafficOnly": true,
         "encryption": {
@@ -373,9 +373,20 @@
         "networkAcls": {
           "resourceAccessRules": [],
           "bypass": "AzureServices",
-          "virtualNetworkRules": [],
-          "ipRules": [],
-          "defaultAction": "Allow"
+          "virtualNetworkRules": [
+            {
+              "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_name')),'/subnets/function')]",
+              "action": "Allow",
+              "state": "Succeeded"
+            }
+          ],
+          "ipRules": [
+            {
+              "value": "103.221.72.225",
+              "action": "Allow"
+            }
+          ],
+          "defaultAction": "Deny"
         },
         "supportsHttpsTrafficOnly": true,
         "encryption": {
