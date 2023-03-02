@@ -3,11 +3,11 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "topics_customertopic_name": {
-      "defaultValue": "testcustomertopic",
+      "defaultValue": "customertopic",
       "type": "String"
     },
     "components_funapp_test_name": {
-      "defaultValue": "funapp-site-arm",
+      "defaultValue": "test-functionapp",
       "type": "String"
     },
     "storageAccounts_storageaccfun_name": {
@@ -19,7 +19,7 @@
       "type": "String"
     },
     "virtualNetworks_vnet_name": {
-      "defaultValue": "arm-vnet",
+      "defaultValue": "vnet-test",
       "type": "String"
     },
     "storageAccounts_storageacc_name": {
@@ -27,7 +27,7 @@
       "type": "String"
     },
     "sites_funapp_test_name": {
-      "defaultValue": "funapp-site-arm",
+      "defaultValue": "test-functionapp",
       "type": "String"
     }
   },
@@ -254,7 +254,7 @@
       "location": "East US",
       "sku": {
         "name": "EP1",
-        "tier": "ElasticPremium",//standard-pallavi
+        "tier": "ElasticPremium",
         "size": "EP1",
         "family": "EP",
         "capacity": 1
@@ -375,10 +375,10 @@
           "bypass": "AzureServices",
           "virtualNetworkRules": [],
           "ipRules": [
-            {
-              "value": "103.221.72.225",
-              "action": "Allow"
-            }
+            //{
+            //  "value": "103.221.72.225",
+            //  "action": "Allow"
+            //}
           ],
           "defaultAction": "Deny"
         },
@@ -470,7 +470,7 @@
         "[resourceId('Microsoft.Web/sites', parameters('sites_funapp_test_name'))]"
       ],
       "properties": {
-        "packageUri": "https://github.com/pallavingavle/deploy-to-azure-demo/blob/main/zipdeploy_content.zip?raw=true"
+        "packageUri": "https://github.com/nareshkothur/deploy-to-azure-demo/blob/main/zipdeploy_content.zip?raw=true"
       }
     },
     {
